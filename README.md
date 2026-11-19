@@ -1,44 +1,96 @@
-# Group Number : 16
 # Physical Clock Synchronization Simulator
-### DS Mini Project 13 — Cristian's Algorithm / NTP
+### Cristian's Algorithm & NTP — Python Implementation
+
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python) ![License](https://img.shields.io/badge/License-MIT-green) ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)
 
 ---
 
-##  Short Architecture Description (3–5 lines)
+## Overview
 
-A **Time Server** process listens on TCP port 5000 and acts as the authoritative NTP clock.  
-Four **Client Node** processes each simulate a distributed node with an independent local clock that starts with a configurable offset and drifts at a fixed rate (ms/s).  
-Each client executes **Cristian's Algorithm**: it records the send timestamp (T₀), receives the server's timestamp (T_server), measures the round-trip time (RTT = T₁ − T₀), and corrects its clock by "T_server + RTT/2 − T_local".  
-Network latency is **simulated** (random 20–150 ms per request) to demonstrate the algorithm under realistic conditions.  
-After synchronisation, nodes continue drifting — illustrating why **periodic re-synchronisation** (as in NTP) is essential.
+A from-scratch Python simulation of **distributed clock synchronization** using **Cristian's Algorithm** — the foundational protocol behind NTP (Network Time Protocol).
+
+The project models a realistic distributed system: a central **Time Server** and four **Client Nodes**, each with an independent local clock that starts with a configurable offset and drifts over time. Nodes synchronize by estimating one-way network latency (`RTT / 2`) and correcting their clocks accordingly — the same core mechanism used in production NTP deployments.
+
+### Why this is interesting
+- Demonstrates a real distributed systems problem: **clock skew and drift** across nodes with no shared memory
+- Uses **TCP sockets + threads** to simulate a live network environment
+- Visualizes synchronization effectiveness with **4 annotated charts** (matplotlib)
+- Fully configurable via CLI flags — easy to experiment with
 
 ---
 
-##  How to Run
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Time Server                          │
+│         TCP :5000  ·  authoritative clock               │
+│         Injects simulated latency: 20–150 ms            │
+└────────────────────────┬────────────────────────────────┘
+                         │  TCP (Cristian's Algorithm)
+        ┌────────────────┼────────────────┐
+        ▼                ▼                ▼
+   [Node-A]         [Node-B]         [Node-C/D]
+  +2.5 s offset    -1.8 s offset     ±drift rates
+  +3 ms/s drift    -1.5 ms/s         configurable
+```
+
+**Cristian's Algorithm:**
+```
+Client                      Server
+  |── time_request (T₀) ──────►|
+  |◄── time_response ──────────|  { T_server, T₀ }
+  T₁ = now()
+  RTT = T₁ − T₀
+  T_corrected = T_server + RTT/2    ← accounts for transit time
+  offset = T_corrected − local_clock
+  local_clock += offset             ← clock corrected
+```
+
+---
+
+## Features
+
+| Feature | Detail |
+|---|---|
+| **Cristian's Algorithm** | Full implementation with RTT/2 compensation |
+| **Simulated network latency** | Random 20–150 ms per request (configurable) |
+| **Clock drift** | Per-node drift rates (ms/s) that persist after sync |
+| **Concurrent sync** | All nodes synchronize in parallel using Python threads |
+| **Drift re-appearance** | Post-sync drift window shows why periodic sync matters |
+| **Rich terminal output** | ANSI-coloured, tabular reports with before/after skew |
+| **4 visualisation charts** | Skew comparison, drift over time, RTT, architecture diagram |
+
+---
+
+## Getting Started
 
 ### Prerequisites
+- Python 3.10+
+- pip
 
-- Python 3.10+ (tested on 3.11 / 3.13)
-- pip packages: matplotlib, numpy
-
-### 1. Install Dependencies
+### Installation
 
 ```bash
+git clone https://github.com/SenTrick16/DS-Project.git
+cd DS-Project
 pip install -r code/requirements.txt
 ```
 
-### 2. Run the Full Simulation (recommended)
+### Run the Full Simulation (recommended)
 
 ```bash
-# Runs simulator + generates 4 plots in /code
 python code/run_all.py
 ```
 
-### 3. Run Only the Simulator (terminal output)
+This runs the simulator **and** generates all 4 plots in the `code/` folder.
+
+### Run Only the Simulator
 
 ```bash
 python code/simulator.py
-# or with custom options:
+
+# With custom options:
 python code/simulator.py --rounds 5 --drift-window 8
 ```
 
@@ -47,90 +99,24 @@ python code/simulator.py --rounds 5 --drift-window 8
 | `--rounds` | `3` | Number of sync rounds per node |
 | `--drift-window` | `5` | Seconds to observe drift re-appearance |
 
-### 4. Generate Only Plots
+### Generate Only Plots
 
 ```bash
 python code/visualizer.py
-# with --show to open interactive windows (requires display):
+
+# Open interactive windows (requires display):
 python code/visualizer.py --show
 ```
 
-### 5. Run on Ubuntu / Linux (no changes needed)
-
-```bash
-# Identical commands — no OS-specific code
-python3 code/simulator.py --rounds 3 --drift-window 5
-python3 code/visualizer.py
-```
-
 ---
 
-##  File Structure
+## Output
 
-```
-DS Project/
-├── README.md            # This file (project root)
-├── .gitignore           # Git ignore rules
-├── group_details.txt    # Group member information
-└── code/
-    ├── time_server.py       # TCP time server — authoritative clock
-    ├── client_node.py       # Distributed node with Cristian's Algorithm
-    ├── simulator.py         # Orchestrator: runs nodes, prints results
-    ├── visualizer.py        # Generates PNG charts
-    ├── run_all.py           # One-command launcher (sim + plots)
-    ├── requirements.txt     # Python dependencies
-    ├── plot_architecture.png
-    ├── plot_skew_comparison.png
-    ├── plot_drift_reappearance.png
-    └── plot_rtt.png
-```
-
-**Output PNGs** (generated in `/code`):
-- `plot_skew_comparison.png`  — Clock skew before vs. after sync
-- `plot_drift_reappearance.png` — Drift growing back over time
-- `plot_rtt.png`              — Network RTT per round
-- `plot_architecture.png`    — System architecture diagram
-
----
-
-##  Dependencies
-
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `matplotlib` | ≥ 3.7 | Charts & architecture diagram |
-| `numpy` | ≥ 1.24 | Numerical arrays for plotting |
-| `socket` | stdlib | TCP networking (built-in) |
-| `threading` | stdlib | Concurrent client handling (built-in) |
-| `json` | stdlib | Message serialisation (built-in) |
-
----
-
-##  Algorithm — Cristian's Algorithm
-
-```
-Client                      Server
-  |                            |
-  |── time_request (T₀) ──────►|
-  |                            |  (inject random delay: 20–150 ms)
-  |◄── time_response ──────────|  { T_server, T₀ }
-  |                            |
-  T₁ = now()
-  RTT = T₁ − T₀
-  T_corrected = T_server + RTT/2
-  offset = T_corrected − local_clock
-  local_clock += offset        ← clock corrected!
-```
-
-**Key insight:** `RTT/2` estimates the one-way network delay, so the correction accounts for the time the response spent in transit.
-
----
-
-##  Sample Output
+**Terminal** — colour-coded round-by-round sync report:
 
 ```
 ════════════════════════════════════════════════════════════════════════
       Physical Clock Synchronization Simulator
-      Cristian's Algorithm / NTP — DS Mini Project 13
 ════════════════════════════════════════════════════════════════════════
 
 INITIAL CLOCK STATE (before any synchronisation)
@@ -145,26 +131,62 @@ SYNCHRONISATION ROUND 1 / 3
   ...
 
 DRIFT RE-APPEARANCE ANALYSIS (after 5s without sync)
-  Node-A     @0s: +68 ms   @50%: +76 ms   @100%: +83 ms  ← drifting!
-  Node-C     @0s: +43 ms   @50%: +55 ms   @100%: +68 ms  ← fastest drift
+  Node-A   @0s: +68 ms   @50%: +76 ms   @100%: +83 ms  ← drifting!
+```
+
+**Generated PNGs** (saved to `code/`):
+
+| File | Shows |
+|------|-------|
+| `plot_skew_comparison.png` | Clock skew before vs. after each sync round |
+| `plot_drift_reappearance.png` | Drift growing back over time post-sync |
+| `plot_rtt.png` | Network RTT measured per round per node |
+| `plot_architecture.png` | System architecture diagram |
+
+---
+
+## Project Structure
+
+```
+DS-Project/
+├── README.md
+├── .gitignore
+└── code/
+    ├── time_server.py       # TCP time server — authoritative clock source
+    ├── client_node.py       # Distributed node with Cristian's Algorithm
+    ├── simulator.py         # Orchestrator: runs nodes, prints coloured report
+    ├── visualizer.py        # Generates 4 matplotlib charts
+    ├── run_all.py           # One-command launcher (simulation + plots)
+    ├── requirements.txt     # Python dependencies
+    ├── plot_architecture.png
+    ├── plot_skew_comparison.png
+    ├── plot_drift_reappearance.png
+    └── plot_rtt.png
 ```
 
 ---
 
-##  Group Details
+## Dependencies
 
-  Members:
-  1. Sonali Minj — Roll No: 241000076
-  2. Sparrsh Sanghi — Roll No: 241000077
-  3. Srishti Tripathi — Roll No: 241000078
-  4. Sukhram Markam — Roll No: 241000079  
-  5. Tanmay Kumar — Roll No: 241000080
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `matplotlib` | ≥ 3.7 | Charts & architecture diagram |
+| `numpy` | ≥ 1.24 | Numerical arrays for plotting |
+| `socket` | stdlib | TCP networking |
+| `threading` | stdlib | Concurrent client sync |
+| `json` | stdlib | Message serialisation |
 
 ---
 
-##  What We Learned
+## Key Takeaways
 
-1. **Cristian's Algorithm** corrects clock skew by accounting for half the RTT — a simple but effective heuristic.
-2. **Clock drift** is inevitable; even after perfect synchronisation, clocks diverge again, which is why NTP re-syncs every 64–1024 seconds.
-3. **Network asymmetry** (send vs. receive latency not being equal) limits Cristian's Algorithm accuracy — NTP's later versions use more sophisticated filtering.
-4. **Concurrency**: real distributed systems run sync on multiple nodes simultaneously — simulated here with Python threads.
+1. **RTT/2 compensation** is a simple but effective heuristic — accurate when send/receive latencies are symmetric.
+2. **Clock drift is inevitable** — even after a perfect sync, clocks diverge again, which is why NTP re-syncs every 64–1024 seconds.
+3. **Network asymmetry** limits Cristian's Algorithm accuracy — NTP's later versions (NTPv4) use more sophisticated filtering and multiple server references.
+4. **Thread-based concurrency** realistically models simultaneous sync across multiple nodes.
+
+---
+
+## License
+
+MIT — free to use, fork, and build on.

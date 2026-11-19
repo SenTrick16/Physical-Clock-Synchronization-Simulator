@@ -1,6 +1,6 @@
 """
 time_server.py — NTP/Cristian's Algorithm Simulator
-Distributed Systems Mini Project — Project 13
+
 
 The Time Server acts as the authoritative clock source.
 Clients connect to it, request the time, and use Cristian's Algorithm

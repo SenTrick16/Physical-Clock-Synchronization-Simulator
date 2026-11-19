@@ -1,6 +1,6 @@
 """
 client_node.py — NTP/Cristian's Algorithm Simulator
-Distributed Systems Mini Project — Project 13
+
 
 Each ClientNode represents a distributed node with:
   • Its own local clock (offset from real time + drift rate)

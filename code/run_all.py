@@ -1,6 +1,5 @@
 """
 run_all.py — NTP/Cristian's Algorithm Simulator
-Distributed Systems Mini Project — Project 13
 
 Convenience script: runs the full simulation + generates all plots.
 Equivalent to:

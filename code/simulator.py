@@ -1,6 +1,5 @@
 """
 simulator.py — NTP/Cristian's Algorithm Simulator
-Distributed Systems Mini Project — Project 13
 
 Main simulation orchestrator.
 Starts the time server in a background thread, creates 4 client nodes
@@ -79,7 +78,7 @@ def print_banner():
     print(C.BOLD + C.CYAN +
           "   Physical Clock Synchronization Simulator".center(72) + C.RESET)
     print(C.WHITE +
-          "   Cristian's Algorithm / NTP — DS Mini Project 13".center(72) + C.RESET)
+          "   Cristian's Algorithm with NTP — github.com/SenTrick16".center(72) + C.RESET)
     print(hr("═"))
     print()
 

@@ -1,6 +1,6 @@
 """
 visualizer.py — NTP/Cristian's Algorithm Simulator
-Distributed Systems Mini Project — Project 13
+
 
 Generates charts showing:
   1. Clock skew before vs after synchronisation for each node
