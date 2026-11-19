@@ -1,0 +1,45 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy / type-checkers
+.mypy_cache/
+.dmypy.json
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# ── OS junk ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── VS Code ───────────────────────────────────────────────────
+.vscode/
+*.code-workspace
+
+# ── Project-specific ──────────────────────────────────────────
+# Generated plot PNGs (reproduced by running visualizer.py)
+# Uncomment the lines below if you don't want to track the plots:
+# code/plot_*.png
