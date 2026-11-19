@@ -1,10 +1,10 @@
-# Group Number : 16
+
 # Physical Clock Synchronization Simulator
-### DS Mini Project 13 — Cristian's Algorithm / NTP
+### Cristian's Algorithm / NTP
 
 ---
 
-##  Short Architecture Description (3–5 lines)
+##  Short Architecture Description 
 
 A **Time Server** process listens on TCP port 5000 and acts as the authoritative NTP clock.  
 Four **Client Node** processes each simulate a distributed node with an independent local clock that starts with a configurable offset and drifts at a fixed rate (ms/s).  
@@ -148,17 +148,6 @@ DRIFT RE-APPEARANCE ANALYSIS (after 5s without sync)
   Node-A     @0s: +68 ms   @50%: +76 ms   @100%: +83 ms  ← drifting!
   Node-C     @0s: +43 ms   @50%: +55 ms   @100%: +68 ms  ← fastest drift
 ```
-
----
-
-##  Group Details
-
-  Members:
-  1. Sonali Minj — Roll No: 241000076
-  2. Sparrsh Sanghi — Roll No: 241000077
-  3. Srishti Tripathi — Roll No: 241000078
-  4. Sukhram Markam — Roll No: 241000079  
-  5. Tanmay Kumar — Roll No: 241000080
 
 ---
 
