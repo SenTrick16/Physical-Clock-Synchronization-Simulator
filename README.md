@@ -166,7 +166,6 @@ DS-Project/
 
 ---
 
-<<<<<<< HEAD
 ## Dependencies
 
 | Package | Version | Purpose |
@@ -180,9 +179,6 @@ DS-Project/
 ---
 
 ## Key Takeaways
-=======
-##  What We Learned
->>>>>>> 892084fe76cf906f8df4cbdde0230b536b1d17d3
 
 1. **RTT/2 compensation** is a simple but effective heuristic — accurate when send/receive latencies are symmetric.
 2. **Clock drift is inevitable** — even after a perfect sync, clocks diverge again, which is why NTP re-syncs every 64–1024 seconds.
